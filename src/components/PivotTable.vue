@@ -63,17 +63,23 @@
                   :rowspan="colHeaderSize">
                 </th>
                 <!-- Column headers -->
-                <th
+                <template
                   v-for="(col, colIndex) in cols"
-                  :key="`${colFieldIndex}-${colIndex}`"
-                  :colspan="col.colspan">
-                  <slot v-if="colField.headerSlotName" :name="colField.headerSlotName" :value="col.value">
+                >
+                  <slot
+                    v-if="colField.headerSlotName"
+                    :name="colField.headerSlotName"
+                    :value="col.value"
+                    :colspan="col.colspan">
                     Missing slot <code>{{ colField.headerSlotName }}</code>
                   </slot>
-                  <template v-else>
-                    {{ col.value }}
-                  </template>
-                </th>
+                  <th
+                    v-else
+                    :key="`${colFieldIndex}-${colIndex}`"
+                    :colspan="col.colspan">
+                      {{ col.value }}
+                  </th>
+                </template>
                 <!-- Top right dead zone -->
                 <th
                   v-if="colFieldIndex === 0 && rowFooterSize > 0"
@@ -91,63 +97,75 @@
               <template v-for="(rowField, rowFieldIndex) in rowHeaderFields">
                 <!-- Multiple slots -->
                 <template v-if="rowField.headerSlotNames">
-                  <th
-                    v-for="(headerSlotName, headerSlotNameIndex) in rowField.headerSlotNames"
-                    :key="`header-${rowIndex}-${rowFieldIndex}-${headerSlotNameIndex}`"
-                    :rowspan="rowField.rowspan">
-                    <slot :name="headerSlotName" :value="rowField.value">
+                  <template
+                    v-for="(headerSlotName) in rowField.headerSlotNames"
+                  >
+                    <slot :name="headerSlotName" :value="rowField.value" :rowspan="rowField.rowspan">
                       Missing slot <code>{{ headerSlotName }}</code>
                     </slot>
-                  </th>
+                  </template>
                 </template>
                 <!-- Single slot/no slot -->
-                <th
-                  v-else
-                  :key="`header-${rowIndex}-${rowFieldIndex}`"
-                  :rowspan="rowField.rowspan">
-                  <slot v-if="rowField.headerSlotName" :name="rowField.headerSlotName" :value="rowField.value">
+                <template v-else>
+                  <slot
+                    v-if="rowField.headerSlotName"
+                    :name="rowField.headerSlotName"
+                    :value="rowField.value"
+                    :rowspan="rowField.rowspan">
                     Missing slot <code>{{ rowField.headerSlotName }}</code>
                   </slot>
-                  <template v-else>
+                  <th
+                    v-else
+                    :key="`header-${rowIndex}-${rowFieldIndex}`"
+                    :rowspan="rowField.rowspan"
+                  >
                     {{ rowField.value }}
-                  </template>
-                </th>
+                  </th>
+                </template>
               </template>
 
               <!-- Values -->
-              <td
-                v-for="(col, colIndex) in sortedCols"
-                :key="`value-${rowIndex}-${colIndex}`"
-                class="text-right">
+              <template v-for="(col, colIndex) in sortedCols">
                 <slot v-if="$scopedSlots.value" name="value" :value="value(row, col)" :labels="labels(row, col)" />
-                <template v-else>{{ value(row, col) }}</template>
-              </td>
+                <td v-else
+                  :key="`value-${rowIndex}-${colIndex}`"
+                  class="text-right">
+                  {{ value(row, col) }}
+                </td>
+              </template>
 
               <!-- Row footers (if slots are provided) -->
               <template v-for="(rowField, rowFieldIndex) in rowFooterFields">
                 <!-- Multiple slots -->
                 <template v-if="rowField.footerSlotNames">
-                  <th
-                    v-for="(footerSlotName, footerSlotNameIndex) in rowField.footerSlotNames"
-                    :key="`footer-${rowIndex}-${rowFieldIndex}-${footerSlotNameIndex}`"
-                    :rowspan="rowField.rowspan">
-                    <slot :name="footerSlotName" :value="rowField.value">
+                  <template
+                    v-for="(footerSlotName) in rowField.footerSlotNames"
+                  >
+                    <slot :name="footerSlotName" :value="rowField.value" :rowspan="rowField.rowspan">
                       Missing slot <code>{{ footerSlotName }}</code>
                     </slot>
-                  </th>
+                  </template>
                 </template>
                 <!-- Single slot/no slot -->
-                <th
+                <template
                   v-else
-                  :key="`footer-${rowIndex}-${rowFieldIndex}`"
-                  :rowspan="rowField.rowspan">
-                  <slot v-if="rowField.footerSlotName" :name="rowField.footerSlotName" :value="rowField.value">
+                >
+                  <slot
+                    v-if="rowField.footerSlotName"
+                    :name="rowField.footerSlotName"
+                    :value="rowField.value"
+                    :rowspan="rowField.rowspan"
+                  >
                     Missing slot <code>{{ rowField.footerSlotName }}</code>
                   </slot>
-                  <template v-else>
+                  <th
+                    v-else
+                    :key="`footer-${rowIndex}-${rowFieldIndex}`"
+                    :rowspan="rowField.rowspan"
+                  >
                     {{ rowField.value }}
-                  </template>
-                </th>
+                  </th>
+                </template>
               </template>
             </tr>
           </tbody>
@@ -167,14 +185,11 @@
                     :rowspan="colFooterSize">
                   </th>
                   <!-- Column footers -->
-                  <th
-                    v-for="(col, colIndex) in sortedCols"
-                    :key="`${colFieldIndex}-${footerSlotNameIndex}-${colIndex}`"
-                    :colspan="col.colspan">
-                    <slot :name="footerSlotName" :value="col.value">
+                  <template v-for="(col) in sortedCols">
+                    <slot :name="footerSlotName" :value="col.value" :colspan="col.colspan">
                       Missing slot <code>{{ footerSlotName }}</code>
                     </slot>
-                  </th>
+                  </template>
                   <!-- Bottom right dead zone -->
                   <th
                     v-if="colFieldIndex === 0 && rowFooterSize > 0 && footerSlotNameIndex === 0"
@@ -192,17 +207,25 @@
                   :rowspan="colFooterSize">
                 </th>
                 <!-- Column footers -->
-                <th
+                <template
                   v-for="(col, colIndex) in cols"
-                  :key="`${colFieldIndex}-${colIndex}`"
-                  :colspan="col.colspan">
-                  <slot v-if="colField.footerSlotName" :name="colField.footerSlotName" :value="col.value">
+                >
+                  <slot
+                    v-if="colField.footerSlotName"
+                    :name="colField.footerSlotName"
+                    :value="col.value"
+                    :colspan="col.colspan"
+                  >
                     Missing slot <code>{{ colField.footerSlotName }}</code>
                   </slot>
-                  <template v-else>
+                  <th
+                    v-else
+                    :key="`${colFieldIndex}-${colIndex}`"
+                    :colspan="col.colspan"
+                  >
                     {{ col.value }}
-                  </template>
-                </th>
+                  </th>
+                </template>
                 <!-- Bottom right dead zone -->
                 <th
                   v-if="colFieldIndex === 0 && rowFooterSize > 0"
