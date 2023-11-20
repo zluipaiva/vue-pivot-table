@@ -1,27 +1,21 @@
 <template>
   <div class="position-relative">
-    <template v-if="isDataLoading">
-      <slot name="loading">
-        Loading...
-      </slot>
-    </template>
-    <template v-else>
-      <template v-if="isDataComputing">
-        <slot name="computing">
-          <div class="position-absolute w-100 h-100 text-center" style="z-index: 1;">
-            <div class="position-sticky d-inline-block mt-5 p-3" style="top: 0;">
-              Loading table values...
-            </div>
-          </div>
-        </slot>
-      </template>
+    <slot v-if="isDataLoading || isDataComputing" name="loading"></slot>
 
-      <div v-if="data.length === 0 || (rows.length === 0 && cols.length === 0)" class="alert alert-warning" role="alert">
+    <div
+      v-if="data.length === 0 || (rows.length === 0 && cols.length === 0)"
+      class="no-data-text"
+      >
+      <p v-if="isDataLoading">
+        {{ loadingText }}
+      </p>
+      <p v-else class="alert alert-warning" role="alert">
         {{ noDataWarningText }}
+      </p>
       </div>
 
       <div v-else-if="cols.length && rows.length" class="table-responsive">
-        <table class="table table-bordered" :aria-busy="isDataLoading || isDataComputing">
+      <table class="table 'table-bordered'" :aria-busy="isDataLoading || isDataComputing">
 
           <!-- Table header -->
           <thead>
@@ -214,7 +208,6 @@
           </tfoot>
         </table>
       </div>
-    </template>
   </div>
 </template>
 
@@ -249,6 +242,10 @@ export default {
     noDataWarningText: {
       type: String,
       default: 'No data to display.'
+    },
+    loadingText: {
+      type: String,
+      default: 'Loading...'
     },
     isDataLoading: {
       type: Boolean,
@@ -547,5 +544,11 @@ export default {
 <style scoped>
 td {
   min-width: 100px;
+}
+
+.no-data-text {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.38);
+  padding-top: 6px;
 }
 </style>
